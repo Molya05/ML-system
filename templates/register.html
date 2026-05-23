@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-stage">
+    <div class="hero-card login-card auth-card">
+        <div class="hero-copy auth-copy">
+            <span class="eyebrow">AI LMS</span>
+            <h1>{{ t('create_account') }}</h1>
+            <p>{{ t('register_subtitle') }}</p>
+        </div>
+        <form class="glass-form auth-form" method="post">
+            <div class="form-heading">
+                <h2>{{ t('register') }}</h2>
+                <p>{{ t('role') }}: {{ t('student_role') }} / {{ t('teacher_role') }}</p>
+            </div>
+            <label>{{ t('full_name') }}
+                <input type="text" name="full_name" autocomplete="name" required>
+            </label>
+            <label>{{ t('username') }}
+                <input type="text" name="username" minlength="3" autocomplete="username" required>
+            </label>
+            <div class="auth-two-col">
+                <label>{{ t('password') }}
+                    <input type="password" name="password" minlength="8" autocomplete="new-password" required>
+                </label>
+                <label>{{ t('confirm_password') }}
+                    <input type="password" name="confirm_password" minlength="8" autocomplete="new-password" required>
+                </label>
+            </div>
+            <div class="auth-two-col">
+                <label>{{ t('role') }}
+                    <select name="role" required>
+                        {% for role_name in role_choices %}
+                        <option value="{{ role_name }}">{{ role_label(role_name) }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <div class="auth-actions">
+                <button type="submit" class="primary-btn auth-submit">{{ t('register') }}</button>
+                <a class="secondary-link auth-link" href="{{ url_for('login') }}">{{ t('already_have_account') }} {{ t('go_to_login') }}</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

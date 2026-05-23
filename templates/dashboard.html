@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ t('welcome') }}</span>
+        <h1>{{ t('dashboard') }}</h1>
+    </div>
+    <div class="stat-pill">
+        {{ progress_summary.completed_modules }}/{{ progress_summary.total_modules }} {{ t('modules') }}
+    </div>
+</section>
+
+{% if g.user.role_name == 'student' %}
+<section class="course-grid">
+    {% if enrolled_courses %}
+        {% for course in enrolled_courses %}
+        <article class="module-card">
+            <div class="module-topline">
+                <span>{{ t('course') }}</span>
+                <span class="status-badge active">{{ course.completed_modules }}/{{ course.total_modules }} {{ t('modules') }}</span>
+            </div>
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.description }}</p>
+            <a class="primary-btn" href="{{ url_for('course_detail', course_id=course.id) }}">{{ t('view_course') }}</a>
+        </article>
+        {% endfor %}
+    {% else %}
+        <article class="lab-card">
+            <h2>{{ t('my_courses') }}</h2>
+            <p>{{ t('my_courses_subtitle') }}</p>
+            <a class="primary-btn" href="{{ url_for('my_courses') }}">{{ t('available_courses') }}</a>
+        </article>
+    {% endif %}
+</section>
+{% endif %}
+
+<section class="module-grid">
+    {% for item in modules %}
+    <article class="module-card {{ 'locked-card' if not item.unlocked else '' }}">
+        <div class="module-topline">
+            <span>#{{
+                item.id
+            }}</span>
+            <span class="status-badge {{ 'complete' if item.module_completed else ('locked' if not item.unlocked else 'active') }}">
+                {% if not item.unlocked %}{{ t('locked') }}
+                {% elif item.module_completed %}{{ t('module_complete') }}
+                {% else %}{{ item.status|title }}
+                {% endif %}
+            </span>
+        </div>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.summary }}</p>
+        {% if item.unlocked %}
+        <a class="primary-btn" href="{{ url_for('module_view', module_id=item.id) }}">{{ t('module_status') }}</a>
+        {% else %}
+        <button class="primary-btn disabled-btn" disabled>{{ t('locked') }}</button>
+        {% endif %}
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

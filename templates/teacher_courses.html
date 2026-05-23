@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ t('manage_courses') }}</span>
+        <h1>{{ t('manage_courses') }}</h1>
+        <p>{{ t('manage_course_subtitle') }}</p>
+    </div>
+    <a class="primary-btn" href="{{ url_for('teacher_course_create') }}">{{ t('create_course') }}</a>
+</section>
+
+<section class="course-grid">
+    {% if courses %}
+        {% for course in courses %}
+        <article class="module-card">
+            <div class="module-topline">
+                <span>{{ t('course') }}</span>
+                <span class="status-badge active">{{ course.module_count }} {{ t('modules') }}</span>
+            </div>
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.description }}</p>
+            <a class="primary-btn" href="{{ url_for('teacher_course_detail', course_id=course.id) }}">{{ t('edit_course') }}</a>
+        </article>
+        {% endfor %}
+    {% else %}
+        <article class="lab-card">
+            <h2>{{ t('no_courses') }}</h2>
+            <a class="primary-btn" href="{{ url_for('teacher_course_create') }}">{{ t('create_course') }}</a>
+        </article>
+    {% endif %}
+</section>
+{% endblock %}

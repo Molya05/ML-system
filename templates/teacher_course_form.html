@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ t('manage_courses') }}</span>
+        <h1>{% if course %}{{ t('edit_course') }}{% else %}{{ t('create_course') }}{% endif %}</h1>
+    </div>
+</section>
+
+<form method="post" class="editor-form">
+    <section class="editor-grid">
+        <div class="lab-card">
+            <label>{{ t('course_title') }}
+                <input type="text" name="title" value="{{ course.title if course else '' }}" required>
+            </label>
+            <label>{{ t('course_description') }}
+                <textarea name="description" rows="6" required>{{ course.description if course else '' }}</textarea>
+            </label>
+        </div>
+        <div class="lab-card">
+            <h2>{{ t('assign_modules') }}</h2>
+            <div class="checkbox-list">
+                {% for module in modules %}
+                <label class="checkbox-item">
+                    <input type="checkbox" name="module_ids" value="{{ module.id }}" {% if module.id in selected_module_ids %}checked{% endif %}>
+                    <span>{{ module['title_' + session.get('lang', 'en')] }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <button type="submit" class="primary-btn">{{ t('save_course') }}</button>
+</form>
+
+{% if course %}
+<section class="teacher-layout">
+    <div class="lab-card">
+        <h2>{{ t('students_enrolled') }}</h2>
+        <div class="teacher-module-list">
+            {% if enrolled_students %}
+                {% for student in enrolled_students %}
+                <div class="teacher-link">
+                    <strong>{{ student.full_name }}</strong>
+                    <span>{{ student.username }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="lab-card">
+        <h2>{{ t('test_history') }}</h2>
+        <div class="history-list">
+            {% if test_rows %}
+                {% for row in test_rows %}
+                <div class="history-item">
+                    <strong>{{ row.full_name }} · {{ row['title_' + session.get('lang', 'en')] }}</strong>
+                    <span>{{ row.score }}/{{ row.total }}</span>
+                    <span>{{ row.created_at }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="teacher-layout">
+    <div class="lab-card">
+        <h2>{{ t('practice_history') }}</h2>
+        <div class="history-list">
+            {% if practice_rows %}
+                {% for row in practice_rows %}
+                <details class="history-item details-item">
+                    <summary>
+                        <strong>{{ row.full_name }} · {{ row['title_' + session.get('lang', 'en')] }}</strong>
+                        <span>{{ row.created_at }}</span>
+                    </summary>
+                    <pre class="history-body">{{ row.submission_text }}</pre>
+                    <form method="post" action="{{ url_for('teacher_grade_submission', course_id=course.id, submission_type='practice', submission_id=row.id) }}" class="grade-form">
+                        <label>{{ t('grade') }}<input type="number" name="score" value="{{ row.score or '' }}"></label>
+                        <label>{{ t('comment') }}<textarea name="comment" rows="3">{{ row.teacher_comment or '' }}</textarea></label>
+                        <button type="submit" class="primary-btn">{{ t('save_grade') }}</button>
+                    </form>
+                </details>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="lab-card">
+        <h2>{{ t('homework_history') }}</h2>
+        <div class="history-list">
+            {% if homework_rows %}
+                {% for row in homework_rows %}
+                <details class="history-item details-item">
+                    <summary>
+                        <strong>{{ row.full_name }} · {{ row['title_' + session.get('lang', 'en')] }}</strong>
+                        <span>{{ row.created_at }}</span>
+                    </summary>
+                    <pre class="history-body">{{ row.submission_text }}</pre>
+                    <form method="post" action="{{ url_for('teacher_grade_submission', course_id=course.id, submission_type='homework', submission_id=row.id) }}" class="grade-form">
+                        <label>{{ t('grade') }}<input type="number" name="score" value="{{ row.score }}"></label>
+                        <label>{{ t('comment') }}<textarea name="comment" rows="3">{{ row.teacher_comment or '' }}</textarea></label>
+                        <button type="submit" class="primary-btn">{{ t('save_grade') }}</button>
+                    </form>
+                </details>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

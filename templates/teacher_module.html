@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ t('teacher_panel') }}</span>
+        <h1>Edit Module {{ module.id }}</h1>
+    </div>
+</section>
+
+<form method="post" class="editor-form">
+    <section class="editor-grid">
+        <div class="lab-card">
+            <h2>Titles & Summary</h2>
+            <label>Title EN<input name="title_en" value="{{ module.title_en }}"></label>
+            <label>Title RU<input name="title_ru" value="{{ module.title_ru }}"></label>
+            <label>Title KZ<input name="title_kz" value="{{ module.title_kz }}"></label>
+            <label>Summary EN<textarea name="summary_en" rows="3">{{ module.summary_en }}</textarea></label>
+            <label>Summary RU<textarea name="summary_ru" rows="3">{{ module.summary_ru }}</textarea></label>
+            <label>Summary KZ<textarea name="summary_kz" rows="3">{{ module.summary_kz }}</textarea></label>
+        </div>
+
+        <div class="lab-card">
+            <h2>Theory</h2>
+            <label>Theory EN<textarea name="theory_en" rows="10">{{ lesson.theory_en }}</textarea></label>
+            <label>Theory RU<textarea name="theory_ru" rows="10">{{ lesson.theory_ru }}</textarea></label>
+            <label>Theory KZ<textarea name="theory_kz" rows="10">{{ lesson.theory_kz }}</textarea></label>
+        </div>
+    </section>
+
+    <section class="editor-grid">
+        <div class="lab-card">
+            <h2>Practice Prompt</h2>
+            <label>EN<textarea name="practice_en" rows="5">{{ practice_assignment.prompt_en }}</textarea></label>
+            <label>RU<textarea name="practice_ru" rows="5">{{ practice_assignment.prompt_ru }}</textarea></label>
+            <label>KZ<textarea name="practice_kz" rows="5">{{ practice_assignment.prompt_kz }}</textarea></label>
+        </div>
+        <div class="lab-card">
+            <h2>Homework Prompt</h2>
+            <label>EN<textarea name="homework_en" rows="5">{{ homework_assignment.prompt_en }}</textarea></label>
+            <label>RU<textarea name="homework_ru" rows="5">{{ homework_assignment.prompt_ru }}</textarea></label>
+            <label>KZ<textarea name="homework_kz" rows="5">{{ homework_assignment.prompt_kz }}</textarea></label>
+        </div>
+    </section>
+
+    <section class="lab-card">
+        <h2>Tests</h2>
+        {% for test in tests %}
+        {% set options = json.loads(test.options_json) %}
+        <div class="test-editor-block">
+            <label>Question EN<textarea name="test_{{ test.id }}_question_en" rows="2">{{ test.question_en }}</textarea></label>
+            <label>Question RU<textarea name="test_{{ test.id }}_question_ru" rows="2">{{ test.question_ru }}</textarea></label>
+            <label>Question KZ<textarea name="test_{{ test.id }}_question_kz" rows="2">{{ test.question_kz }}</textarea></label>
+            <label>Option 1<input name="test_{{ test.id }}_option_1" value="{{ options[0] }}"></label>
+            <label>Option 2<input name="test_{{ test.id }}_option_2" value="{{ options[1] }}"></label>
+            <label>Option 3<input name="test_{{ test.id }}_option_3" value="{{ options[2] }}"></label>
+            <label>Option 4<input name="test_{{ test.id }}_option_4" value="{{ options[3] }}"></label>
+            <label>Correct answer<input name="test_{{ test.id }}_answer" value="{{ test.correct_answer }}"></label>
+            <label>Explanation EN<textarea name="test_{{ test.id }}_explanation_en" rows="2">{{ test.explanation_en }}</textarea></label>
+            <label>Explanation RU<textarea name="test_{{ test.id }}_explanation_ru" rows="2">{{ test.explanation_ru }}</textarea></label>
+            <label>Explanation KZ<textarea name="test_{{ test.id }}_explanation_kz" rows="2">{{ test.explanation_kz }}</textarea></label>
+        </div>
+        {% endfor %}
+    </section>
+
+    <button type="submit" class="primary-btn">{{ t('save_changes') }}</button>
+</form>
+{% endblock %}

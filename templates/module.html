@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ t('modules') }}</span>
+        <h1>{{ module['title_' + session.get('lang', 'en')] }}</h1>
+        <p>{{ module['summary_' + session.get('lang', 'en')] }}</p>
+    </div>
+    <div class="stat-pill">{{ t('current_stage') }}: {{ stage|title }}</div>
+</section>
+
+<section class="module-layout">
+    <div class="stage-panel">
+        <div class="stage-card {{ 'current' if stage == 'theory' else '' }} {{ 'done' if progress.theory_completed else '' }}">
+            <h2>1. {{ t('theory') }}</h2>
+            <div class="rich-text">{{ lesson['theory_' + session.get('lang', 'en')] | replace('\n', '<br>') | safe }}</div>
+            <button
+                class="primary-btn"
+                id="completeTheoryBtn"
+                data-module-id="{{ module.id }}"
+                {% if stage != 'theory' %}disabled{% endif %}
+            >{{ t('complete_theory') }}</button>
+        </div>
+
+        <div class="stage-card {{ 'current' if stage == 'test' else '' }} {{ 'done' if progress.test_completed else '' }}">
+            <h2>2. {{ t('test') }}</h2>
+            <div id="testContainer" class="test-container" data-module-id="{{ module.id }}"></div>
+            <button
+                class="primary-btn"
+                id="loadTestBtn"
+                data-module-id="{{ module.id }}"
+                {% if not progress.theory_completed %}disabled{% endif %}
+            >{{ t('load_test') }}</button>
+        </div>
+
+        <div class="stage-card {{ 'current' if stage == 'practice' else '' }} {{ 'done' if progress.practice_completed else '' }}">
+            <h2>3. {{ t('practice') }}</h2>
+            <p>{{ practice_assignment['prompt_' + session.get('lang', 'en')] }}</p>
+            <textarea id="practiceText" class="practice-editor" rows="9" placeholder="{{ t('practical_prompt') }}" {% if stage != 'practice' %}disabled{% endif %}></textarea>
+            <button class="primary-btn" id="practiceBtn" data-module-id="{{ module.id }}" {% if stage != 'practice' %}disabled{% endif %}>{{ t('submit_practice') }}</button>
+            <div id="practiceFeedback" class="feedback-box"></div>
+        </div>
+
+        <div class="stage-card {{ 'current' if stage == 'homework' else '' }} {{ 'done' if progress.homework_completed else '' }}">
+            <h2>4. {{ t('homework') }}</h2>
+            <p>{{ homework_assignment['prompt_' + session.get('lang', 'en')] }}</p>
+            <button class="primary-btn" id="homeworkBtn" data-module-id="{{ module.id }}" {% if stage != 'homework' %}disabled{% endif %}>{{ t('complete_homework') }}</button>
+            <div id="homeworkFeedback" class="feedback-box"></div>
+        </div>
+    </div>
+
+    <div class="lab-panel">
+        <div class="lab-card">
+            <div class="lab-header">
+                <h2>{{ t('lab') }}</h2>
+                <button class="primary-btn" id="runCodeBtn" data-module-id="{{ module.id }}">{{ t('run_code') }}</button>
+            </div>
+            <textarea id="codeEditor" class="code-editor">print("Hello from NovaMind Lab")
+
+numbers = [1, 2, 3, 4, 5]
+print("Average:", sum(numbers) / len(numbers))
+
+# Optional plot example:
+# import matplotlib.pyplot as plt
+# plt.plot(numbers)
+# plt.title("Progress trend")
+# plt.savefig("progress.png")
+</textarea>
+            <label class="lab-input-label" for="stdinInput">{{ t('stdin') }}</label>
+            <textarea id="stdinInput" rows="3" placeholder="Optional stdin input"></textarea>
+            <div class="lab-output-grid">
+                <div>
+                    <h3>{{ t('output') }}</h3>
+                    <pre id="codeOutput" class="output-box"></pre>
+                </div>
+                <div>
+                    <h3>{{ t('error_output') }}</h3>
+                    <pre id="codeError" class="output-box error-box"></pre>
+                </div>
+            </div>
+            <div>
+                <h3>{{ t('artifacts') }}</h3>
+                <div id="artifactGallery" class="artifact-gallery"></div>
+            </div>
+        </div>
+
+        <div class="lab-card">
+            <h2>{{ t('files') }}</h2>
+            <form id="uploadForm" class="upload-form" data-module-id="{{ module.id }}">
+                <input type="file" name="file" id="labFileInput">
+                <button type="submit" class="primary-btn">{{ t('upload_file') }}</button>
+            </form>
+            <div id="fileList" class="file-list" data-module-id="{{ module.id }}"></div>
+        </div>
+
+        <div class="lab-card">
+            <h2>{{ t('ai_tutor') }}</h2>
+            <textarea id="tutorQuestion" rows="5" placeholder="{{ t('ask_ai') }}"></textarea>
+            <button class="primary-btn" id="tutorBtn" data-module-id="{{ module.id }}">{{ t('ask_ai') }}</button>
+            <div id="tutorAnswer" class="feedback-box tutor-box"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}

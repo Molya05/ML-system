@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="{{ session.get('lang', 'en') }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ t('app_title') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="{% if g.user %}app-body{% else %}auth-body{% endif %}">
+    <div class="app-shell">
+        {% if g.user %}
+        <button class="mobile-nav-toggle" type="button" data-sidebar-toggle>{{ t('menu') }}</button>
+        <div class="sidebar-backdrop" data-sidebar-close></div>
+        <aside class="sidebar">
+            <div class="sidebar-inner">
+                <div>
+                    <div class="brand">NovaMind</div>
+                    <p class="brand-subtitle">{{ t('your_path') }}</p>
+                </div>
+                <nav class="nav-links">
+                    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' else '' }}">{{ t('dashboard') }}</a>
+                    {% if g.user.role_name == 'student' %}
+                    <a href="{{ url_for('my_courses') }}" class="{{ 'active' if request.endpoint in ['my_courses', 'course_detail'] else '' }}">{{ t('my_courses') }}</a>
+                    {% endif %}
+                    <a href="{{ url_for('history') }}" class="{{ 'active' if request.endpoint == 'history' else '' }}">{{ t('history') }}</a>
+                    {% if g.user.role_name in ['admin', 'teacher'] %}
+                    <a href="{{ url_for('teacher_courses') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('teacher_course') else '' }}">{{ t('manage_courses') }}</a>
+                    <a href="{{ url_for('teacher_panel') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('teacher') else '' }}">{{ t('teacher_panel') }}</a>
+                    {% endif %}
+                </nav>
+                <div class="user-box">
+                    <strong>{{ g.user.full_name }}</strong>
+                    <span>{{ role_label(g.user.role_name) }}</span>
+                    <a href="{{ url_for('logout') }}">{{ t('logout') }}</a>
+                </div>
+            </div>
+        </aside>
+        {% endif %}
+        <main class="main-content {% if not g.user %}auth-layout{% endif %}">
+            <div class="content-shell {% if not g.user %}content-shell-auth{% endif %}">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash-stack">
+                            {% for message in messages %}
+                            <div class="flash">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    <script>
+        window.APP_LANG = "{{ session.get('lang', 'en') }}";
+        window.APP_TEXTS = {{ app_texts() | tojson }};
+        window.APP_SET_LANGUAGE_TEMPLATE = "{{ url_for('set_language', lang='__LANG__') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

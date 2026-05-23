@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ t('history') }}</span>
+        <h1>{{ t('history_title') }}</h1>
+        <p>{{ t('history_subtitle') }}</p>
+    </div>
+</section>
+
+<section class="lab-card history-filter-card">
+    <form class="history-filter-form" method="get">
+        <label>{{ t('filter_module') }}
+            <select name="module" onchange="this.form.submit()">
+                <option value="">{{ t('all_modules') }}</option>
+                {% for module in modules %}
+                <option value="{{ module.id }}" {% if selected_module == module.id %}selected{% endif %}>
+                    {{ module['title_' + session.get('lang', 'en')] }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+    </form>
+</section>
+
+<section class="history-grid">
+    <article class="lab-card">
+        <h2>{{ t('completed_modules_label') }}</h2>
+        <div class="history-list">
+            {% if completed_rows %}
+                {% for row in completed_rows %}
+                <div class="history-item">
+                    <strong>{{ row['title_' + session.get('lang', 'en')] }}</strong>
+                    <span>{{ t('submitted_at') }}: {{ row.completed_at or '-' }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </article>
+
+    <article class="lab-card">
+        <h2>{{ t('test_history') }}</h2>
+        <div class="history-list">
+            {% if test_rows %}
+                {% for row in test_rows %}
+                <div class="history-item">
+                    <strong>{{ row['title_' + session.get('lang', 'en')] }}</strong>
+                    <span>{{ t('attempt_result') }}: {{ row.score }}/{{ row.total }}</span>
+                    <span>{{ t('submitted_at') }}: {{ row.created_at }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </article>
+</section>
+
+<section class="history-grid">
+    <article class="lab-card">
+        <h2>{{ t('practice_history') }}</h2>
+        <div class="history-list">
+            {% if practice_rows %}
+                {% for row in practice_rows %}
+                <details class="history-item details-item">
+                    <summary>
+                        <strong>{{ row['title_' + session.get('lang', 'en')] }}</strong>
+                        <span>{{ t('submitted_at') }}: {{ row.created_at }}</span>
+                    </summary>
+                    <pre class="history-body">{{ row.submission_text }}</pre>
+                    <div class="feedback-box">{{ row.ai_feedback }}</div>
+                </details>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </article>
+
+    <article class="lab-card">
+        <h2>{{ t('homework_history') }}</h2>
+        <div class="history-list">
+            {% if homework_rows %}
+                {% for row in homework_rows %}
+                <details class="history-item details-item">
+                    <summary>
+                        <strong>{{ row['title_' + session.get('lang', 'en')] }}</strong>
+                        <span>{{ t('attempt_result') }}: {{ row.score }}</span>
+                        <span>{{ t('submitted_at') }}: {{ row.created_at }}</span>
+                    </summary>
+                    <pre class="history-body">{{ row.submission_text }}</pre>
+                    <div class="feedback-box">{{ row.ai_feedback }}</div>
+                </details>
+                {% endfor %}
+            {% else %}
+                <p>{{ t('no_history') }}</p>
+            {% endif %}
+        </div>
+    </article>
+</section>
+{% endblock %}

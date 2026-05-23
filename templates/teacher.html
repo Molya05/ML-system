@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ t('admin_tools') }}</span>
+        <h1>{{ t('teacher_panel') }}</h1>
+    </div>
+</section>
+
+<section class="teacher-layout">
+    <div class="lab-card">
+        <div class="page-header compact-header">
+            <div>
+                <h2>{{ t('manage_courses') }}</h2>
+                <p>{{ t('manage_course_subtitle') }}</p>
+            </div>
+            <a class="primary-btn" href="{{ url_for('teacher_course_create') }}">{{ t('create_course') }}</a>
+        </div>
+        <div class="teacher-module-list">
+            {% if courses %}
+                {% for course in courses %}
+                <a href="{{ url_for('teacher_course_detail', course_id=course.id) }}" class="teacher-link">
+                    <strong>{{ course.title }}</strong>
+                    <span>{{ course.module_count }} {{ t('modules') }}</span>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="teacher-link">
+                    <strong>{{ t('no_courses') }}</strong>
+                    <span>{{ t('create_course') }}</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="lab-card">
+        <h2>{{ t('modules') }}</h2>
+        <div class="teacher-module-list">
+            {% for module in modules %}
+            <a href="{{ url_for('teacher_module', module_id=module.id) }}" class="teacher-link">
+                <strong>{{ module['title_' + session.get('lang', 'en')] }}</strong>
+                <span>{{ t('edit_content') }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="lab-card">
+        <h2>{{ t('student_overview') }}</h2>
+        <div class="teacher-module-list">
+            {% for student in students %}
+            <a href="{{ url_for('teacher_student', user_id=student.id) }}" class="teacher-link">
+                <strong>{{ student.full_name }}</strong>
+                <span>{{ student.completed_modules or 0 }}/15 {{ t('modules_completed') }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

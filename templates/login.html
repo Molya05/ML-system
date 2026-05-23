@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-stage">
+    <div class="hero-card login-card auth-card">
+        <div class="hero-copy auth-copy">
+            <span class="eyebrow">AI LMS</span>
+            <h1>{{ t('login_title') }}</h1>
+            <p>{{ t('login_subtitle') }}</p>
+        </div>
+        <form class="glass-form auth-form" method="post">
+            <div class="form-heading">
+                <h2>{{ t('sign_in') }}</h2>
+                <p>{{ t('your_path') }}</p>
+            </div>
+            <label>{{ t('username') }}
+                <input type="text" name="username" autocomplete="username" required>
+            </label>
+            <label>{{ t('password') }}
+                <input type="password" name="password" autocomplete="current-password" required>
+            </label>
+            <div class="auth-actions">
+                <button type="submit" class="primary-btn auth-submit">{{ t('sign_in') }}</button>
+                <a class="secondary-link auth-link" href="{{ url_for('register') }}">{{ t('need_account') }} {{ t('go_to_register') }}</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
